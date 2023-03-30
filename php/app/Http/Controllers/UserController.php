@@ -37,8 +37,6 @@ class UserController extends Controller
             $user = new User();
             $user->fill($request->all());
             $user->password = Hash::make($user->password);
-            $user->nivel_id = 2;
-
             $user->save();
 
             return response()->json($user, 201);

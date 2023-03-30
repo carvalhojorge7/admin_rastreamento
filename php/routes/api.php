@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 /**Rota para o Login */
 Route::post('auth/login', [AuthController::class, 'login']);
-Route::post('novo-usuario', [UserController::class, 'store']);
+//Route::post('novo-usuario', [UserController::class, 'store']);
 
 Route::middleware(['apiJWT'])->group(function () {
     /*Daqui para baixo todas as rotas que deverão estar protegidas*/

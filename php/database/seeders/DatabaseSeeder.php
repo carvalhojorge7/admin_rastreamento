@@ -17,8 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
         
-        $this->call(GeneroSeeder::class);
-        $this->call(NiveisSeeder::class);
-        $this->call(AdminAuthSeeder::class);
+        $this->call(UserSeeder::class);
+
     }
 }
