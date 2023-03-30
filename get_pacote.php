@@ -1,3 +1,43 @@
+<?php
+// Verifica se o formulário foi enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+  $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODAxOTQ5ODIsImV4cCI6MTY4MTQwNDU4MiwibmJmIjoxNjgwMTk0OTgyLCJqdGkiOiJlT1FoWE45ckVEMXpzRkk0Iiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.SnX7PTgpuGLOzTslpCEkrzvdc8E7XB1LctGPtNHgmWk';
+
+  $url = 'http://127.0.0.1:8000/api/busca/pacotes';
+
+  // Define os dados do formulário
+  $data = array(
+    'id' => $_POST['id'] ?? null,
+    'pedido' => $_POST['pedido'] ?? null,
+    'cliente' => $_POST['cliente'] ?? null,
+    'status' => $_POST['status'] ?? null,
+    'previsao' => $_POST['previsao'] ?? null,
+    'detalhes' => $_POST['detalhes'] ?? null,
+  );
+
+  $data_json = json_encode($data);
+
+  $ch = curl_init();
+
+  // Define as opções da requisição
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Authorization: Bearer ' . $token
+  ));
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
+
+  $response = curl_exec($ch);
+
+  $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  curl_close($ch);
+
+  $response = json_decode($response);
+}
+?>
 <!DOCTYPE html>
 <html lang="pt_br">
 
@@ -142,16 +182,29 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-
+              <?php if (isset($response->msg)) {
+                echo '
+                  <!-- ALERT -->
+                  <div class="alert alert-' . $response->alert . ' alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h5><i class="icon fas fa-info"></i> ' . $response->msg . '</h5>
+                  </div>
+                  <!-- /ALERT -->';
+              }
+              ?>
               <div class="row">
                 <div class="col-md-6">
                   <!-- inicio busca -->
                   <div class="form-group">
-                    <form>
+                    <form method="POST">
                       <div class="input-group mb-3">
-                        <input type="text" class="form-control rounded-0" placeholder="Código do Pedido">
+                        <input type="text" name="pedido" id="pedido" class="form-control rounded-0" <?php if (isset($response->data->pedido)) {
+                                                                                                      echo "value='" . $response->data->pedido . "'";
+                                                                                                    } else {
+                                                                                                      echo "placeholder='Código do Pedido'";
+                                                                                                    } ?>>
                         <span class="input-group-append">
-                          <button type="button" class="btn btn-info btn-flat">Buscar</button>
+                          <button type="submmit" class="btn btn-info btn-flat">Buscar</button>
                         </span>
                       </div>
                     </form>
@@ -160,15 +213,6 @@
                 </div>
                 <!-- /.col -->
               </div>
-              <!-- ALERT -->
-              <div class="alert alert-danger alert-dismissible">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <h5><i class="icon fas fa-ban"></i> Alert!</h5>
-                Danger alert preview. This alert is dismissable. A wonderful serenity has taken possession of my
-                entire
-                soul, like these sweet mornings of spring which I enjoy with my whole heart.
-              </div>
-              <!-- /ALERT -->
             </div><!-- /.container-fluid -->
           </div>
         </div>
@@ -184,54 +228,79 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>Pedido</label>
-                    <input class="form-control" type="text" placeholder="Código do Pedido" disabled>
+              <form method="POST">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label>Pedido</label>
+                      <input class="form-control" name="pedido" id="pedido" type="text" value='<?php if (isset($response->data->pedido)) {
+                                                                                                  echo $response->data->pedido;
+                                                                                                } else {
+                                                                                                  echo 'Código do Pedido';
+                                                                                                } ?>' readonly>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                      <label>Cliente</label>
+                      <input class="form-control" name="cliente" id="cliente" type="text" value='<?php if (isset($response->data->cliente)) {
+                                                                                                    echo $response->data->cliente;
+                                                                                                  } else {
+                                                                                                    echo 'Nome do Cliente';
+                                                                                                  } ?>'>
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                      <label>Status</label>
+                      <select class="form-control select2" name="status" id="status" style="width: 100%;">
+                        <option selected="selected"><?php if (isset($response->data->status)) {
+                                                      echo $response->data->status;
+                                                    } else {
+                                                      echo '';
+                                                    } ?></option>
+                        <option>Despachando</option>
+                        <option>Em Trânsito</option>
+                        <option>Saiu Para Entrega</option>
+                        <option>Entregue</option>
+                      </select>
+                    </div>
+                    <!-- /.form-group -->
                   </div>
-                  <!-- /.form-group -->
-                  <div class="form-group">
-                    <label>Cliente</label>
-                    <input class="form-control" type="text" placeholder="Nome do Cliente">
-                  </div>
-                  <!-- /.form-group -->
-                  <div class="form-group">
-                    <label>Status</label>
-                    <select class="form-control select2" style="width: 100%;">
-                      <option selected="selected">Despachando</option>
-                      <option>Em Trânsito</option>
-                      <option>Saiu Para Entrega</option>
-                      <option>Entregue</option>
-                    </select>
-                  </div>
-                  <!-- /.form-group -->
-                </div>
-                <!-- /.col -->
-                <div class="col-md-6">
-                  <!-- Date -->
-                  <div class="form-group">
-                    <label>Previsão de Entrega:</label>
-                    <div class="input-group date">
-                      <input type="text" class="form-control datepicker-input" data-target="#reservationdate" value="10/12/1991" />
-                      <div class="input-group-append">
-                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  <!-- /.col -->
+                  <div class="col-md-6">
+                    <!-- Date -->
+                    <div class="form-group">
+                      <label>Previsão de Entrega:</label>
+                      <div class="input-group date">
+                        <input type="text" name="previsao" id="previsao" class="form-control datepicker-input" data-target="#reservationdate" value='<?php if (isset($response->data->previsao)) {
+                                                                                                                                                        echo $response->data->previsao;
+                                                                                                                                                      } else {
+                                                                                                                                                        echo '01/01/1991';
+                                                                                                                                                      } ?>' />
+                        <div class="input-group-append">
+                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <!-- /.form-group -->
-                  <div class="form-group">
-                    <!-- textarea -->
+                    <!-- /.form-group -->
                     <div class="form-group">
-                      <label>Detalhes</label>
-                      <textarea class="form-control" rows="5" placeholder="Detalhes do Status do Pacote..."></textarea>
+                      <!-- textarea -->
+                      <div class="form-group">
+                        <label>Detalhes</label>
+                        <textarea class="form-control" name="detalhes" id="detalhes" rows="5"><?php if (isset($response->data->detalhes)) {
+                                                                                                echo $response->data->detalhes;
+                                                                                              } ?></textarea>
+                      </div>
                     </div>
+                    <!-- /.form-group -->
                   </div>
-                  <!-- /.form-group -->
+                  <input type="hidden" name="id" id="id" value="<?php if (isset($response->data->id)) {
+                                                                  echo $response->data->id;
+                                                                } ?>">
+
+                  <!-- /.col -->
+                  <button type="submit" class="btn btn-block bg-gradient-primary">Atualizar Status do Pedido</button>
                 </div>
-                <!-- /.col -->
-                <button type="button" class="btn btn-block bg-gradient-primary">Atualizar Status do Pedido</button>
-              </div>
+              </form>
             </div><!-- /.container-fluid -->
       </section>
       <!-- /.content -->

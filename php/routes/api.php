@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ImagensController;
+use App\Http\Controllers\PacotesController;
 use App\Http\Controllers\PerguntasController;
 use App\Http\Controllers\QuizzesController;
 use App\Http\Controllers\UserController;
@@ -26,12 +27,16 @@ Route::post('auth/login', [AuthController::class, 'login']);
 
 Route::middleware(['apiJWT'])->group(function () {
     /*Daqui para baixo todas as rotas que deverão estar protegidas*/
-    
+
     /** Informações do usuário logado */
-    Route::get('auth/logado', [AuthController::class, 'logado']); 
+    Route::get('auth/logado', [AuthController::class, 'logado']);
     /** Encerra o acesso */
-    Route::get('auth/logout', [AuthController::class, 'logout']); 
+    Route::get('auth/logout', [AuthController::class, 'logout']);
     /** Atualiza o token */
-    Route::get('auth/refresh', [AuthController::class, 'refresh']); 
+    Route::get('auth/refresh', [AuthController::class, 'refresh']);
     
+    Route::apiResources([
+        'pacotes' => PacotesController::class,
+    ]);
+    Route::post('busca/pacotes', [PacotesController::class, 'busca_e_atualiza']);
 });

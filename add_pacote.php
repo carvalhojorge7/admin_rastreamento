@@ -3,7 +3,8 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Define a URL do Laravel
-  $url = 'http://localhost/php/api/pedidos';
+  $url = 'http://127.0.0.1:8000/api/pacotes';
+  $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODAxOTQ5ODIsImV4cCI6MTY4MTQwNDU4MiwibmJmIjoxNjgwMTk0OTgyLCJqdGkiOiJlT1FoWE45ckVEMXpzRkk0Iiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.SnX7PTgpuGLOzTslpCEkrzvdc8E7XB1LctGPtNHgmWk';
 
   // Define os dados do formulário
   $data = array(
@@ -14,25 +15,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     'detalhes' => $_POST['detalhes'],
   );
 
-  // Inicializa o cURL
-  $curl = curl_init();
+  $data_json = json_encode($data);
 
-  // Define as opções do cURL
-  curl_setopt_array($curl, array(
-    CURLOPT_URL => $url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => false,
-    CURLOPT_POSTFIELDS => http_build_query($data)
+  // Inicia uma nova requisição CURL
+  $ch = curl_init();
+
+  // Define as opções da requisição
+  curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    'Content-Type: application/json',
+    'Authorization: Bearer ' . $token
   ));
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
 
-  // Executa a solicitação e pega a resposta
-  $response = curl_exec($curl);
+  // Executa a requisição e obtém a resposta
+  $response = curl_exec($ch);
 
-  // Fecha o cURL
-  curl_close($curl);
-
-  // Imprime a resposta do Laravel
-  var_dump($response);
+  $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  curl_close($ch);
 }
 ?>
 <!DOCTYPE html>
@@ -179,6 +181,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <!-- /.card-header -->
             <div class="card-body">
+
+              <?php if (isset($http_code)) {
+                if ($http_code == 200) {
+                  echo '        
+                    <!-- ALERT -->
+                    <div class="alert alert-success alert-dismissible">
+                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                      <h5><i class="icon fas fa-check"></i> Pacote criado com sucesso!</h5>
+                    </div>
+                    <!-- /ALERT -->';
+                } else {
+                  echo '
+                  <!-- ALERT -->
+                  <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h5><i class="icon fas fa-ban"></i> Ocorreu um erro inesperado. Os dados não foram salvos!</h5>
+                  </div>
+                  <!-- /ALERT -->';
+                }
+              }
+              ?>
+
               <form method="POST">
                 <div class="row">
                   <div class="col-md-6">
