@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\HistoricoPacote;
 use App\Models\Pacotes;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -45,6 +47,13 @@ class PacotesController extends Controller
     {
         try {
             $pacote = Pacotes::create($request->all());
+            HistoricoPacote::create([
+                'pacote_id' => $pacote->id,
+                'data_atualizado_em' => Carbon::now()->format('d/m/Y'),
+                'hora_atualizado_em' => Carbon::now()->toTimeString(),
+                'status' => $pacote->status,
+                'detalhes' => $pacote->detalhes,
+            ]);
             return response()->json(['data' => $pacote], 200);
         } catch (Exception $e) {
             report($e);
@@ -58,6 +67,13 @@ class PacotesController extends Controller
             if ($request->id) {
                 $pacote = Pacotes::find($request->id);
                 $pacote->update($request->all());
+                HistoricoPacote::create([
+                    'pacote_id' => $pacote->id,
+                    'data_atualizado_em' => Carbon::now()->format('d/m/Y'),
+                    'hora_atualizado_em' => Carbon::now()->toTimeString(),
+                    'status' => $pacote->status,
+                    'detalhes' => $pacote->detalhes,
+                ]);
                 return response()->json([
                     'data' => $pacote,
                     'msg' => 'Pacote atualizado com sucesso!',
@@ -88,14 +104,11 @@ class PacotesController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function rastrear_pacote($codigo)
     {
-        //
+        $pacote = Pacotes::where('pedido', $codigo)->with('historico')->first();
+        return response()->json([
+            'data' => $pacote,
+        ], 200);
     }
 }

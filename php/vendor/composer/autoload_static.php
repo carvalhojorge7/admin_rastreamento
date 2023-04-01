@@ -553,6 +553,7 @@ class ComposerStaticInit0f7e0ff0d25af113cc9096b3a2cff6d3
         'App\\Http\\Middleware\\ValidateSignature' => __DIR__ . '/../..' . '/app/Http/Middleware/ValidateSignature.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Http\\Middleware\\apiProtectedRoute' => __DIR__ . '/../..' . '/app/Http/Middleware/apiProtectedRoute.php',
+        'App\\Models\\HistoricoPacote' => __DIR__ . '/../..' . '/app/Models/HistoricoPacote.php',
         'App\\Models\\Pacotes' => __DIR__ . '/../..' . '/app/Models/Pacotes.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',

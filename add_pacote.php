@@ -14,6 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $data = array(
     'pedido' => $_POST['pedido'],
     'cliente' => $_POST['cliente'],
+    'destino' => $_POST['destino'],
+    'cep' => $_POST['cep'],
     'status' => $_POST['status'],
     'previsao' => $_POST['previsao'],
     'detalhes' => $_POST['detalhes'],
@@ -227,6 +229,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <!-- /.form-group -->
                     <div class="form-group">
+                      <label>Destino</label>
+                      <input class="form-control" type="text" name="destino" id="destino" placeholder="Destino">
+                    </div>
+                    <!-- /.form-group -->
+                    <div class="form-group">
+                      <label>CEP</label>
+                      <input class="form-control" type="text" name="cep" id="cep" placeholder="00000-000">
+                    </div>
+                    <!-- /.form-group -->
+                  </div>
+                  <!-- /.col -->
+                  <div class="col-md-6">
+                    <div class="form-group">
                       <label>Status</label>
                       <select class="form-control select2" name="status" id="status" style="width: 100%;">
                         <option selected="selected">Despachando</option>
@@ -236,9 +251,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                       </select>
                     </div>
                     <!-- /.form-group -->
-                  </div>
-                  <!-- /.col -->
-                  <div class="col-md-6">
                     <!-- Date -->
                     <div class="form-group">
                       <label>Previsão de Entrega:</label>

@@ -12,8 +12,15 @@ class Pacotes extends Model
     protected $fillable = [
         'pedido',
         'cliente',
+        'destino',
+        'cep',
         'status',
         'previsao',
         'detalhes'
     ];
+
+    public function historico()
+    {
+        return $this->hasMany(HistoricoPacote::class, 'pacote_id', 'id');
+    }
 }

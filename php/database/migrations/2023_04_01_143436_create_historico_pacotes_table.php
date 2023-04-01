@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePacotesTable extends Migration
+class CreateHistoricoPacotesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,16 @@ class CreatePacotesTable extends Migration
      */
     public function up()
     {
-        Schema::create('pacotes', function (Blueprint $table) {
+        Schema::create('historico_pacotes', function (Blueprint $table) {
             $table->id();
-            $table->string('pedido')->unique();
-            $table->string('cliente');
-            $table->string('destino');
-            $table->string('cep');
+            $table->bigInteger('pacote_id');
+            $table->string('data_atualizado_em');
+            $table->string('hora_atualizado_em');
             $table->string('status');
-            $table->string('previsao');
             $table->string('detalhes')->default('Sem Informações detalhadas.');
             $table->timestamps();
+
+            $table->foreign('pacote_id')->references('id')->on('pacotes');
         });
     }
 
@@ -33,6 +33,6 @@ class CreatePacotesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pacotes');
+        Schema::dropIfExists('historico_pacotes');
     }
 }
