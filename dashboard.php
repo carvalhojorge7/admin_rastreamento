@@ -1,45 +1,34 @@
 <?php
-  session_start();
+session_start();
 
-  if (isset($_SESSION['token'])) {
-  
-    $token = $_SESSION['token'];
-  } else {
-    header('Location: login.php');
-  } 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (isset($_SESSION['token'])) {
 
-  $url = 'http://127.0.0.1:8000/api/pacotes';
-
-  $data = array(
-    'pedido' => $_POST['pedido'],
-    'cliente' => $_POST['cliente'],
-    'destino' => $_POST['destino'],
-    'cep' => $_POST['cep'],
-    'status' => $_POST['status'],
-    'previsao' => $_POST['previsao'],
-    'detalhes' => $_POST['detalhes'],
-  );
-
-  $data_json = json_encode($data);
-
-  $ch = curl_init();
-
-  curl_setopt($ch, CURLOPT_URL, $url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Content-Type: application/json',
-    'Authorization: Bearer ' . $token
-  ));
-  curl_setopt($ch, CURLOPT_POST, true);
-  curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
-
-  $response = curl_exec($ch);
-
-  $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  curl_close($ch);
+  $token = $_SESSION['token'];
+} else {
+  header('Location: login.php');
 }
+
+$url = 'http://127.0.0.1:8000/api/pacotes';
+
+$ch = curl_init();
+
+// Define as opções da requisição
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+  'Content-Type: application/json',
+  'Authorization: Bearer ' . $token
+));
+curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+$response = curl_exec($ch);
+
+$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+$response = json_decode($response);
 ?>
+
 <!DOCTYPE html>
 <html lang="pt_br">
 
@@ -48,8 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Admin | Dashboard</title>
 
-  <!-- daterange picker -->
-  <link rel="stylesheet" href="../../plugins/daterangepicker/daterangepicker.css">
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
@@ -121,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
             <li class="nav-item">
-              <a href="dashboard.php" class="nav-link">
+              <a href="#" class="nav-link active">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                   Dashboard
@@ -130,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link active">
+              <a href="add_pacote.php" class="nav-link">
                 <i class="nav-icon fas fa-truck"></i>
                 <p>
                   Novo Pacote
@@ -167,115 +154,139 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
       <!-- Content Header (Page header) -->
-      <section class="content-header">
+      <div class="content-header">
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Novo Pacote</h1>
-            </div>
+              <h1 class="m-0">Dashboard</h1>
+            </div><!-- /.col -->
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Novo Pacote</li>
+                <li class="breadcrumb-item active">Dashboard</li>
               </ol>
-            </div>
-          </div>
+            </div><!-- /.col -->
+          </div><!-- /.row -->
         </div><!-- /.container-fluid -->
-      </section>
+      </div>
+      <!-- /.content-header -->
 
       <!-- Main content -->
       <section class="content">
         <div class="container-fluid">
-          <!-- SELECT2 EXAMPLE -->
-          <div class="card card-default">
-            <div class="card-header">
-              <h3 class="card-title">Dados do Pacote</h3>
-            </div>
-            <!-- /.card-header -->
-            <div class="card-body">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-lg-4 col-6">
+              <!-- small box -->
+              <div class="small-box bg-info">
+                <div class="inner">
+                  <h3 style="color:white"><?php
+                                          echo $response->total ?? '-';
+                                          ?></h3>
 
-              <?php if (isset($http_code)) {
-                if ($http_code == 200) {
-                  echo '        
-                    <!-- ALERT -->
-                    <div class="alert alert-success alert-dismissible">
-                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                      <h5><i class="icon fas fa-check"></i> Pacote criado com sucesso!</h5>
-                    </div>
-                    <!-- /ALERT -->';
-                } else {
-                  echo '
-                  <!-- ALERT -->
-                  <div class="alert alert-danger alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <h5><i class="icon fas fa-ban"></i> Ocorreu um erro inesperado. Os dados não foram salvos!</h5>
-                  </div>
-                  <!-- /ALERT -->';
-                }
-              }
-              ?>
-
-              <form method="POST">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label>Pedido</label>
-                      <input class="form-control" type="text" name="pedido" id="pedido" placeholder="Código do Pedido">
-                    </div>
-                    <!-- /.form-group -->
-                    <div class="form-group">
-                      <label>Cliente</label>
-                      <input class="form-control" type="text" name="cliente" id="cliente" placeholder="Nome do Cliente">
-                    </div>
-                    <!-- /.form-group -->
-                    <div class="form-group">
-                      <label>Destino</label>
-                      <input class="form-control" type="text" name="destino" id="destino" placeholder="Destino">
-                    </div>
-                    <!-- /.form-group -->
-                    <div class="form-group">
-                      <label>CEP</label>
-                      <input class="form-control" type="text" name="cep" id="cep" placeholder="00000-000">
-                    </div>
-                    <!-- /.form-group -->
-                  </div>
-                  <!-- /.col -->
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label>Status</label>
-                      <select class="form-control select2" name="status" id="status" style="width: 100%;">
-                        <option selected="selected">Despachando</option>
-                        <option>Em Trânsito</option>
-                        <option>Saiu Para Entrega</option>
-                        <option>Entregue</option>
-                      </select>
-                    </div>
-                    <!-- /.form-group -->
-                    <!-- Date -->
-                    <div class="form-group">
-                      <label>Previsão de Entrega:</label>
-                      <div class="input-group date">
-                        <input type="text" class="form-control datepicker-input" name="previsao" id="previsao" data-target="#reservationdate" />
-                        <div class="input-group-append">
-                          <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- /.form-group -->
-                    <div class="form-group">
-                      <!-- textarea -->
-                      <div class="form-group">
-                        <label>Detalhes</label>
-                        <textarea class="form-control" rows="5" name="detalhes" id="detalhes" placeholder="Detalhes do Status do Pacote..."></textarea>
-                      </div>
-                    </div>
-                    <!-- /.form-group -->
-                  </div>
-                  <button type="submit" class="btn btn-block bg-gradient-primary">Criar Pacote</button>
-                  <!-- /.col -->
+                  <p>Total Pacotes</p>
                 </div>
-              </form>
-            </div><!-- /.container-fluid -->
+                <div class="icon">
+                  <i class="nav-icon fas fa-box"></i>
+                </div>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-4 col-6">
+              <!-- small box -->
+              <div class="small-box bg-success">
+                <div class="inner">
+                  <h3 style="color:white"><?php
+                                          echo $response->em_transito ?? '-';
+                                          ?></h3>
+
+                  <p>Pacotes em Rota</p>
+                </div>
+                <div class="icon">
+                  <i class="nav-icon fas fa-shipping-fast"></i>
+                </div>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-4 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning">
+                <div class="inner">
+                  <h3 style="color:white"><?php
+                                          echo $response->entregue ?? '-';
+                                          ?></h3>
+
+                  <p style="color:white">Pacotes Entregues</p>
+                </div>
+                <div class="icon">
+                  <i class="nav-icon fas fa-box-open"></i>
+                </div>
+              </div>
+            </div>
+            <!-- ./col -->
+
+          </div>
+          <!-- /.row -->
+          <!-- Main row -->
+          <div class="row">
+            <!-- Left col -->
+            <section class="col-lg-12">
+              <div class="row">
+                <div class="col-12">
+                  <div class="card">
+                    <!-- /.card-header -->
+                    <div class="card-body table-responsive p-0" style="height: 300px;">
+                      <table class="table table-head-fixed text-nowrap">
+                        <thead>
+                          <tr>
+                            <th>Pedido</th>
+                            <th>Cliente</th>
+                            <th>Previsão</th>
+                            <th>Status</th>
+                            <th>Detalhes</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php
+                          if (isset($response->lista)) {
+                            foreach ($response->lista as $pacote) {
+                              switch ($pacote->status) {
+                                case 'Despachando':
+                                  $alert = 'primary';
+                                  break;
+                                case 'Em Trânsito':
+                                  $alert = 'success';
+                                  break;
+                                case 'Saiu Para Entrega':
+                                  $alert = 'secondary';
+                                  break;
+                                case 'Entregue':
+                                  $alert = 'warning';
+                                  break;
+                              }
+                              echo '<tr>
+                              <td>' . $pacote->pedido . '</td>
+                              <td>' . $pacote->cliente . '</td>
+                              <td>' . $pacote->previsao . '</td>
+                              <td><span class="badge badge-' . $alert . '">' . $pacote->status . '</span></td>
+                              <td>' . $pacote->detalhes . '</td>
+                            </tr>';
+                            }
+                          }
+                          ?>
+
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </section>
+
+            <!-- /.row (main row) -->
+          </div><!-- /.container-fluid -->
       </section>
       <!-- /.content -->
     </div>
@@ -329,43 +340,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <script src="dist/js/demo.js"></script>
   <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
   <script src="dist/js/pages/dashboard.js"></script>
-  <script>
-    //Date picker
-    $(function() {
-      $('input[data-target="#reservationdate"]').daterangepicker({
-        "singleDatePicker": true,
-        "autoApply": true,
-        "locale": {
-          "format": "DD/MM/YYYY",
-          "separator": "/",
-          "daysOfWeek": [
-            "Dom",
-            "Seg",
-            "Ter",
-            "Qua",
-            "Qui",
-            "Sex",
-            "Sab"
-          ],
-          "monthNames": [
-            "Janeiro",
-            "Fevereiro",
-            "Março",
-            "Abril",
-            "Maio",
-            "Junho",
-            "Julho",
-            "Agosto",
-            "Setembro",
-            "Outubro",
-            "Novembro",
-            "Dezembro"
-          ],
-          "firstDay": 1,
-        }
-      });
-    });
-  </script>
 </body>
 
 </html>

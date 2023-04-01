@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email']) && isset($_P
     if(isset($response->access_token)){
         session_start();
         $_SESSION['token'] = $response->access_token;
-        header('Location: index.php');
+        header('Location: dashboard.php');
     }
 }
 ?>
