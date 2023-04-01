@@ -1,5 +1,12 @@
 <?php
-$token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODAzNTg5MTcsImV4cCI6MTY4MTU2ODUxNywibmJmIjoxNjgwMzU4OTE3LCJqdGkiOiJLY2xkU1pFWFdNcnBzak9iIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.aE7mAQYoi5bL4D_nFhCJN12oj8-PVRmR2D22VJwdY1M';
+session_start();
+
+if (isset($_SESSION['token'])) {
+
+  $token = $_SESSION['token'];
+} else {
+  header('Location: login.php');
+}
 
 $url = 'http://127.0.0.1:8000/api/pacotes';
 
@@ -20,7 +27,6 @@ $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
 $response = json_decode($response);
-
 ?>
 
 <!DOCTYPE html>
@@ -29,7 +35,7 @@ $response = json_decode($response);
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Dashboard</title>
+  <title>Admin | Dashboard</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -57,9 +63,9 @@ $response = json_decode($response);
   <div class="wrapper">
 
     <!-- Preloader -->
-    <!-- <div class="preloader flex-column justify-content-center align-items-center">
+    <div class="preloader flex-column justify-content-center align-items-center">
       <img class="animation__shake" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
-    </div> -->
+    </div>
 
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -124,6 +130,15 @@ $response = json_decode($response);
                 <i class="nav-icon fas fa-search-location"></i>
                 <p>
                   Rastrear Pacote
+                  <!-- <span class="right badge badge-danger">New</span> -->
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="logout.php" class="nav-link">
+                <i class="nav-icon fas fa-lock"></i>
+                <p>
+                  Sair
                   <!-- <span class="right badge badge-danger">New</span> -->
                 </p>
               </a>

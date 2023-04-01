@@ -1,12 +1,16 @@
 <?php
-// Verifica se o formulário foi enviado
+  session_start();
+
+  if (isset($_SESSION['token'])) {
+  
+    $token = $_SESSION['token'];
+  } else {
+    header('Location: login.php');
+  } 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-  // Define a URL do Laravel
   $url = 'http://127.0.0.1:8000/api/pacotes';
-  $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODAzNTg5MTcsImV4cCI6MTY4MTU2ODUxNywibmJmIjoxNjgwMzU4OTE3LCJqdGkiOiJLY2xkU1pFWFdNcnBzak9iIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.aE7mAQYoi5bL4D_nFhCJN12oj8-PVRmR2D22VJwdY1M';
 
-  // Define os dados do formulário
   $data = array(
     'pedido' => $_POST['pedido'],
     'cliente' => $_POST['cliente'],
@@ -17,10 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $data_json = json_encode($data);
 
-  // Inicia uma nova requisição CURL
   $ch = curl_init();
 
-  // Define as opções da requisição
   curl_setopt($ch, CURLOPT_URL, $url);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -30,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   curl_setopt($ch, CURLOPT_POST, true);
   curl_setopt($ch, CURLOPT_POSTFIELDS, $data_json);
 
-  // Executa a requisição e obtém a resposta
   $response = curl_exec($ch);
 
   $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -43,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Dashboard</title>
+  <title>Admin | Dashboard</title>
 
   <!-- daterange picker -->
   <link rel="stylesheet" href="../../plugins/daterangepicker/daterangepicker.css">
@@ -140,6 +141,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="nav-icon fas fa-search-location"></i>
                 <p>
                   Rastrear Pacote
+                  <!-- <span class="right badge badge-danger">New</span> -->
+                </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="logout.php" class="nav-link">
+                <i class="nav-icon fas fa-lock"></i>
+                <p>
+                  Sair
                   <!-- <span class="right badge badge-danger">New</span> -->
                 </p>
               </a>
