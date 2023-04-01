@@ -106,7 +106,9 @@ class PacotesController extends Controller
 
     public function rastrear_pacote($codigo)
     {
-        $pacote = Pacotes::where('pedido', $codigo)->with('historico')->first();
+        $pacote = Pacotes::where('pedido', $codigo)->with(['historico' => function ($query) {
+            $query->orderBy('id', 'asc');
+        }])->first();
         return response()->json([
             'data' => $pacote,
         ], 200);
