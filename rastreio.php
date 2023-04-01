@@ -1,3 +1,24 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    if (isset($_GET['cod'])) {
+
+        $url = 'http://127.0.0.1:8000/api/rastrear_pacote/' . $_GET['cod'];
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json'
+        ));
+        curl_setopt($ch, CURLOPT_HTTPGET, true);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $response = json_decode($response);
+    }
+}
+?>
 <!DOCTYPE html>
 <!--
 This is a starter template page. Use this page to start your new project from
@@ -32,9 +53,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <div class="navbar">
 
                     <!-- SEARCH FORM -->
-                    <form class="form-inline ml-0 ml-md-3">
+                    <form class="form-inline ml-0 ml-md-3" method="get" action="">
                         <div class="input-group input-group-sm">
-                            <input class="form-control form-control-navbar" type="search" placeholder="Rastrear Encomenda" aria-label="Search">
+                            <input class="form-control form-control-navbar" name="cod" id="cod" type="search" placeholder="Rastrear Encomenda" aria-label="Search">
                             <div class="input-group-append">
                                 <button class="btn btn-navbar" type="submit">
                                     <i class="fas fa-search"></i>
@@ -42,6 +63,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             </div>
                         </div>
                     </form>
+
                 </div>
 
 
@@ -64,51 +86,78 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <div class="col-lg-8">
                             <div class="card">
                                 <div class="card-body">
-                                <div class="timeline">
-                
-                <!-- timeline time label -->
-                <div class="time-label">
-                  <span class="bg-blue">29/03/2023</span>
-                </div>
-                <!-- /.timeline-label -->
+
+                                    <?php
+                                    if (isset($response->data)) {
+                                        $last_date = $response->data->historico[0]->data_atualizado_em;
+                                        echo '<div class="timeline">';
+                                        echo '<div class="time-label">
+                                                <span class="bg-blue">' . $response->data->historico[0]->data_atualizado_em . '</span>
+                                            </div>';
+                                        foreach ($response->data->historico as $dados) {
+                                            $data = $dados->data_atualizado_em;
+                                            switch ($dados->status) {
+                                                case 'Despachando':
+                                                    $alert = 'primary';
+                                                    $color = 'blue';
+                                                    break;
+                                                case 'Em Trânsito':
+                                                    $alert = 'success';
+                                                    $color = 'green';
+                                                    break;
+                                                case 'Saiu Para Entrega':
+                                                    $alert = 'secondary';
+                                                    $color = 'gray';
+                                                    break;
+                                                case 'Entregue':
+                                                    $alert = 'warning';
+                                                    $color = 'yellow';
+                                                    break;
+                                            }
+                                            if ($data == $last_date) {
+                                                echo '
+                                                <div>
+                                                    <i class="fas fa-truck bg-' . $color . '"></i>
+                                                    <div class="timeline-item">
+                                                        <span class="time"><i class="fas fa-clock"></i> ' . $dados->hora_atualizado_em . '</span>
+                                                        <h3 class="timeline-header"><span class="badge badge-' . $alert . '">' . $dados->status . '</span></h3>
+                                                        <div class="timeline-body">
+                                                        ' . $dados->detalhes . '
+                                                        </div>
+                                                    </div>
+                                                </div>';
+                                            } else {
+                                                echo '
+                                                <div class="time-label">
+                                                    <span class="bg-' . $color . '">' . $dados->data_atualizado_em . '</span>
+                                                </div>
+                                                <div>
+                                                    <i class="fas fa-truck bg-' . $color . '"></i>
+                                                    <div class="timeline-item">
+                                                        <span class="time"><i class="fas fa-clock"></i> ' . $dados->hora_atualizado_em . '</span>
+                                                        <h3 class="timeline-header"><span class="badge badge-' . $alert . '">' . $dados->status . '</span></h3>
+                                                        <div class="timeline-body">
+                                                        ' . $dados->detalhes . '
+                                                        </div>
+                                                    </div>
+                                                </div>';
+                                            }
+
+                                            $last_date = $data;
+                                        }
+
+                                        echo '<div>
+                                                <i class="fas fa-clock bg-gray"></i>
+                                            </div>
+                                        </div>';
+                                    } else {
+                                        echo 'Nenhum pacote encontrado';
+                                    }
+                                    ?>
 
 
-                <!-- timeline item -->
-                <div>
-                  <i class="fas fa-truck bg-blue"></i>
-                  <div class="timeline-item">
-                    <span class="time"><i class="fas fa-clock"></i> 12:05</span>
-                    <h3 class="timeline-header"><span class='badge badge-primary'>Despachando</span></h3>
-                    <div class="timeline-body">
-                      Sua encomenda ta na baixa da egua ainda...
-                    </div>
-                  </div>
-                </div>
-                <!-- END timeline item -->
 
-                <!-- timeline-label -->
-                <div class="time-label">
-                  <span class="bg-green">30/03/2023</span>
-                </div>
-                <!-- /.timeline-label -->
 
-                <!-- timeline item -->
-                <div>
-                  <i class="fas fa-truck bg-blue"></i>
-                  <div class="timeline-item">
-                    <span class="time"><i class="fas fa-clock"></i> 09:23</span>
-                    <h3 class="timeline-header"><span class='badge badge-success'>Em Trânsito</span></h3>
-                    <div class="timeline-body">
-                      Agora ta vindo... mas ta na baixa da egua ainda...
-                    </div>
-                  </div>
-                </div>
-                <!-- END timeline item -->
-               
-                <div>
-                  <i class="fas fa-clock bg-gray"></i>
-                </div>
-              </div>
                                 </div>
                             </div>
                         </div>
@@ -117,13 +166,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         <div class="col-lg-4">
                             <div class="card">
                                 <div class="card-header">
-                                    <h5 class="card-title m-0">Origem</h5>
+                                    <h5 class="card-title m-0">Origem:</h5>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-title">Ultrabyteshop</h6>
+                                    <h6 class="card-title"><?php echo isset($response->data->pedido) ? 'ultrabyteshop' : '-'; ?></h6>
 
-                                    <p class="card-text">Pedido criado por ultrabyteshop.com.br</p>
-                                    <a href="https://ultrabyteshop.com.br" class="btn btn-primary">Visitar a loja</a>
+                                    <p class="card-text"><?php echo isset($response->data->pedido) ? 'Pedido criado por ultrabyteshop.com.br' : ''; ?></p>
+
+                                    <?php echo isset($response->data->pedido) ? '<a href="https://ultrabyteshop.com.br" class="btn btn-primary">Visitar a loja</a>' : ''; ?>
+
                                 </div>
                             </div>
 
@@ -132,10 +183,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <h5 class="card-title m-0">Destino</h5>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-title">Special title treatment</h6>
+                                    <h6 class="card-title"><?php echo isset($response->data->cliente) ? $response->data->cliente : '-'; ?></h6>
 
-                                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                    <p class="card-text"><?php echo isset($response->data->destino) ? $response->data->destino : ''; ?></p>
+                                    <p class="card-text"><?php echo isset($response->data->cep) ? $response->data->cep : ''; ?></p>
                                 </div>
                             </div>
                         </div>
