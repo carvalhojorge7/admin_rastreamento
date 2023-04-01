@@ -1,35 +1,26 @@
 <?php
-// Verifica se o formulário foi enviado
-//if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODAzNTg5MTcsImV4cCI6MTY4MTU2ODUxNywibmJmIjoxNjgwMzU4OTE3LCJqdGkiOiJLY2xkU1pFWFdNcnBzak9iIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.aE7mAQYoi5bL4D_nFhCJN12oj8-PVRmR2D22VJwdY1M';
 
-  // Define a URL do Laravel
-  $url = 'http://localhost/php/api/users';
+$url = 'http://127.0.0.1:8000/api/pacotes';
 
-  // // Define os dados do formulário
-  // $data = array(
-  //   'nome' => $_POST['nome'],
-  //   'email' => $_POST['email']
-  // );
+$ch = curl_init();
 
-  // Inicializa o cURL
-  $curl = curl_init();
+// Define as opções da requisição
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+  'Content-Type: application/json',
+  'Authorization: Bearer ' . $token
+));
+curl_setopt($ch, CURLOPT_HTTPGET, true);
 
-  // Define as opções do cURL
-  curl_setopt_array($curl, array(
-    CURLOPT_URL => $url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST => false,
-  //  CURLOPT_POSTFIELDS => http_build_query($data)
-  ));
+$response = curl_exec($ch);
 
-  // Executa a solicitação e pega a resposta
-  $response = curl_exec($curl);
+$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
 
-  // Fecha o cURL
-  curl_close($curl);
+$response = json_decode($response);
 
-  // Imprime a resposta do Laravel
-  echo $response;
 ?>
 
 <!DOCTYPE html>
@@ -66,9 +57,9 @@
   <div class="wrapper">
 
     <!-- Preloader -->
-    <div class="preloader flex-column justify-content-center align-items-center">
+    <!-- <div class="preloader flex-column justify-content-center align-items-center">
       <img class="animation__shake" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
-    </div>
+    </div> -->
 
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
@@ -174,7 +165,9 @@
               <!-- small box -->
               <div class="small-box bg-info">
                 <div class="inner">
-                  <h3 style="color:white">150</h3>
+                  <h3 style="color:white"><?php
+                                          echo $response->total ?? '-';
+                                          ?></h3>
 
                   <p>Total Pacotes</p>
                 </div>
@@ -188,7 +181,9 @@
               <!-- small box -->
               <div class="small-box bg-success">
                 <div class="inner">
-                  <h3 style="color:white">53</h3>
+                  <h3 style="color:white"><?php
+                                          echo $response->em_transito ?? '-';
+                                          ?></h3>
 
                   <p>Pacotes em Rota</p>
                 </div>
@@ -202,7 +197,9 @@
               <!-- small box -->
               <div class="small-box bg-warning">
                 <div class="inner">
-                  <h3 style="color:white">44</h3>
+                  <h3 style="color:white"><?php
+                                          echo $response->entregue ?? '-';
+                                          ?></h3>
 
                   <p style="color:white">Pacotes Entregues</p>
                 </div>
@@ -235,34 +232,33 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>PR45658123CE</td>
-                            <td>João das Neves</td>
-                            <td>27-03-2023</td>
-                            <td><span class="badge badge-warning">Entregue</span></td>
-                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                          </tr>
-                          <tr>
-                            <td>PR56689745CE</td>
-                            <td>Bob Sponja</td>
-                            <td>27-04-2023</td>
-                            <td><span class="badge badge-success">Em Trânsito</span></td>
-                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                          </tr>
-                          <tr>
-                            <td>PR56689745CE</td>
-                            <td>Jack Sparrow</td>
-                            <td>17-04-2023</td>
-                            <td><span class="badge badge-primary">Despachando</span></td>
-                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                          </tr>
-                          <tr>
-                            <td>PR56689745CE</td>
-                            <td>João Qualquer</td>
-                            <td>27-03-2023</td>
-                            <td><span class="badge badge-secondary">Saiu Para Entrega</span></td>
-                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                          </tr>
+                          <?php
+                          if (isset($response->lista)) {
+                            foreach ($response->lista as $pacote) {
+                              switch ($pacote->status) {
+                                case 'Despachando':
+                                  $alert = 'primary';
+                                  break;
+                                case 'Em Trânsito':
+                                  $alert = 'success';
+                                  break;
+                                case 'Saiu Para Entrega':
+                                  $alert = 'secondary';
+                                  break;
+                                case 'Entregue':
+                                  $alert = 'warning';
+                                  break;
+                              }
+                              echo '<tr>
+                              <td>' . $pacote->pedido . '</td>
+                              <td>' . $pacote->cliente . '</td>
+                              <td>' . $pacote->previsao . '</td>
+                              <td><span class="badge badge-' . $alert . '">' . $pacote->status . '</span></td>
+                              <td>' . $pacote->detalhes . '</td>
+                            </tr>';
+                            }
+                          }
+                          ?>
 
                         </tbody>
                       </table>

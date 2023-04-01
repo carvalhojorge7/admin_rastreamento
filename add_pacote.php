@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   // Define a URL do Laravel
   $url = 'http://127.0.0.1:8000/api/pacotes';
-  $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODAxOTQ5ODIsImV4cCI6MTY4MTQwNDU4MiwibmJmIjoxNjgwMTk0OTgyLCJqdGkiOiJlT1FoWE45ckVEMXpzRkk0Iiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.SnX7PTgpuGLOzTslpCEkrzvdc8E7XB1LctGPtNHgmWk';
+  $token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE2ODAzNTg5MTcsImV4cCI6MTY4MTU2ODUxNywibmJmIjoxNjgwMzU4OTE3LCJqdGkiOiJLY2xkU1pFWFdNcnBzak9iIiwic3ViIjoiNCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.aE7mAQYoi5bL4D_nFhCJN12oj8-PVRmR2D22VJwdY1M';
 
   // Define os dados do formulário
   $data = array(

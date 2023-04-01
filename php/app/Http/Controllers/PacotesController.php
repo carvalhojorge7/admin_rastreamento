@@ -16,7 +16,29 @@ class PacotesController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $em_transito = Pacotes::where([
+                'status' => 'Despachando',
+                'status' => 'Em trânsito',
+                'status' => 'Saiu Para Entrega'
+            ])->count();
+            $despachando = Pacotes::where('status', 'Despachando')->count();
+            $em_transito = Pacotes::where('status', 'Em Trânsito')->count();
+            $saiu_entrega = Pacotes::where('status', 'Saiu Para Entrega')->count();
+            $entregue = Pacotes::where('status', 'Entregue')->count();
+            $pacotes = Pacotes::orderBy('id', 'desc')->get();
+            $qtd_transito = $despachando + $em_transito + $saiu_entrega;
+            $total = $qtd_transito + $entregue;
+            return response()->json([
+                'total' => $total,
+                'em_transito' => $qtd_transito,
+                'entregue' => $entregue,
+                'lista' => $pacotes
+            ], 200);
+        } catch (Exception $e) {
+            report($e);
+            return response()->json(['error' => $e], 500);
+        }
     }
 
     public function store(Request $request)
