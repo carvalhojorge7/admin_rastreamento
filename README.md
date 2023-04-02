@@ -26,23 +26,26 @@ Este é um sistema de rastreio de encomendas desenvolvido em Laravel, com o obje
 
 ## Acesso
 
-Ao executar o comando `php artisan serve`, o sistema estará disponível em `http://localhost:8000`. Para acessá-lo, utilize as seguintes credenciais de usuário:
+O backend roda no Laravel:
+Ao executar o comando `php artisan serve`, a api estará disponível em `http://localhost:8000/api`. 
+Lembre-se de rodar o migrate e o seed, para que o banco seja criado e alimentado com o usuário padrão.
 
-- E-mail: admin@example.com
-- Senha: password
+O frontend roda no PHP 8.1
+O dashboard estárá disponível em 'http://localhost/login.php'
+Para acessá-lo, utilize as seguintes credenciais de usuário:
+
+- E-mail: admin@email.com
+- Senha: 12345678
 
 ## Screenshots
 
-![Página inicial](https://example.com/images/home.png)
+![Página inicial](https://rastreio.de/screenshots/Screenshot_3.png)
 
-![Cadastro de encomendas](https://example.com/images/shipment.png)
+![Dashboard](https://rastreio.de/screenshots/Screenshot_4.png)
 
-![Histórico de localizações](https://example.com/images/history.png)
+![Atualização de encomendas](https://rastreio.de/screenshots/Screenshot_5.png)
 
 ## Contribuição
 
 Este projeto foi desenvolvido como parte de um desafio pessoal e não é mantido ativamente. No entanto, sinta-se livre para contribuir com correções de bugs ou novas funcionalidades através de pull requests.
 
-## Licença
-
-Este projeto é licenciado sob a licença MIT. Veja o arquivo LICENSE.md para mais detalhes.
