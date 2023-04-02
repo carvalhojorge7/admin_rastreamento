@@ -31,7 +31,7 @@ Ao executar o comando `php artisan serve`, a api estará disponível em `http://
 Lembre-se de rodar o migrate e o seed, para que o banco seja criado e alimentado com o usuário padrão.
 
 O frontend roda no PHP 8.1
-O dashboard estárá disponível em 'http://localhost/login.php'
+O dashboard estárá disponível em `http://localhost/login.php`
 Para acessá-lo, utilize as seguintes credenciais de usuário:
 
 - E-mail: admin@email.com
