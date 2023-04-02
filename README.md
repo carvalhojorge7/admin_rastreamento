@@ -37,7 +37,7 @@ Para acessá-lo, utilize as seguintes credenciais de usuário:
 - E-mail: admin@email.com
 - Senha: 12345678
 
-Um exemplo do projeto em produção pode ser visto em: 'https://rastreio.de'
+Um exemplo do projeto em produção pode ser visto em: 'https://rastreio.de/?cod=PR78455678CE'
 
 ## Screenshots
 
