@@ -13,13 +13,13 @@ Este é um sistema de rastreio de encomendas desenvolvido em Laravel, com o obje
 
 - Laravel - framework PHP utilizado no backend;
 - AdminLTE - Bootstrap 4 Admin Dashboard(https://adminlte.io) utilizado no frontend;
-- MySQL - banco de dados utilizado para armazenar os dados do sistema;
+- PostgreSQL - banco de dados utilizado para armazenar os dados do sistema;
 
 ## Instalação
 
 1. Clone o repositório em sua máquina;
 2. Execute o comando `composer install` para instalar as dependências do Laravel;
-3. Crie um banco de dados MySQL e configure as variáveis de ambiente do Laravel no arquivo `.env` com as credenciais de acesso ao banco de dados;
+3. Crie um banco de dados e configure as variáveis de ambiente do Laravel no arquivo `.env` com as credenciais de acesso ao banco de dados;
 4. Execute o comando `php artisan migrate` para criar as tabelas no banco de dados;
 5. Execute o comando `php artisan db:seed` para popular o banco de dados com dados de teste (opcional);
 6. Execute o comando `php artisan serve` para iniciar o servidor local.
