@@ -30,6 +30,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Rastreamento de Encomendas</title>
+    <meta name="description" content="Rastreamento de encomendas em tempo real. Acompanhe sua entrega de maneira fácil e segura.">
+    <meta name="keywords" content="rastreamento, encomendas, entregas, correios, transportadora">
+    <meta name="author" content="Rastreio.de">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta name="robots" content="noodp">
+    <meta name="language" content="Portuguese">
+    <link rel="canonical" href="https://rastreio.de">
+    <meta property="og:title" content="Rastreamento de Encomendas">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://rastreio.de">
+    <!-- <meta property="og:image" content="https://rastreio.de/images/logo.png"> -->
+    <meta property="og:description" content="Rastreamento de encomendas em tempo real. Acompanhe sua entrega de maneira fácil e segura.">
+    <meta property="og:site_name" content="Rastreio.de">
+    <meta property="og:locale" content="pt_BR">
+    <meta name="twitter:title" content="Rastreamento de Encomendas">
+    <!-- <meta name="twitter:image" content="https://rastreio.de/images/logo.png"> -->
+    <meta name="twitter:description" content="Rastreamento de encomendas em tempo real. Acompanhe sua entrega de maneira fácil e segura.">
+    <meta name="twitter:card" content="summary_large_image">
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
